@@ -30,6 +30,4 @@ public class Product extends BaseEntity {
     @OneToOne
     private Category category;
 
-
-
 }

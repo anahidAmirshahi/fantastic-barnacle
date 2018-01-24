@@ -21,14 +21,9 @@ public class CityController {
         return cityService.getCity(id);
     }
 
-    @PostMapping("/cities/init")
-    public void initCity(){
-        cityService.initCity();
-    }
-
     @PostMapping("/cities")
-    public City insertCity(@RequestBody City city) {
-        cityService.insertCity(city);
+    public City createCity(@RequestBody City city) {
+        cityService.createCity(city);
         return city;
     }
 

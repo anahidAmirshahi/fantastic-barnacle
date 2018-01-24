@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,6 +18,5 @@ public class Category extends BaseEntity {
 
     public String type;
     public String value;// for developing logic(s)
-
 
 }

@@ -24,7 +24,7 @@ public class CategoryService {
         return categoryRepository.findOne(id);
     }
 
-    public void saveCategory(Category category) {
+    public void createCategory(Category category) {
         if(category.getEnable() == null)
             category.setEnable(true);
 

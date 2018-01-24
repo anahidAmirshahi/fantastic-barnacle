@@ -14,35 +14,23 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public List<Customer> getAllCustomers()   {
+    public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         customerRepository.findAll().forEach(customers::add);
         return customers;
     }
 
-    public Customer getCustomer(String id)     {
+    public Customer getCustomer(String id) {
         return customerRepository.findOne(id);
     }
 
-    public void insertCustomer(Customer customer)   {
+    public void createCustomer(Customer customer) {
 
         if (customer.getEnable() == null)
             customer.setEnable(true);
 
         CodeGenerator codeGenerator = new CodeGenerator();
-        customer.setCustomerCode(codeGenerator.randomUUID(8));
-
-        customerRepository.save(customer);
-    }
-
-    public void initCustomer() {
-
-        Customer customer = new Customer();
-
-        customer.setFirstName("Anahid");
-        customer.setLastName("Amirshahi");
-        customer.setAge(20);
-        customer.setEnable(true);
+        customer.setCustomerCode(codeGenerator.randomUUID(5));
 
         customerRepository.save(customer);
     }
@@ -75,10 +63,9 @@ public class CustomerService {
 
     }
 
-    public void deleteCustomer(String id)    {
+    public void deleteCustomer(String id) {
         customerRepository.delete(id);
     }
-
 
 
 }

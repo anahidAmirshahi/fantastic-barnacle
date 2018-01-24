@@ -1,11 +1,9 @@
 package ir.minishopping.minishopping.city;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,7 +22,7 @@ public class CityService {
         return cityRepository.findOne(id);
     }
 
-    public void insertCity(City city) {
+    public void createCity(City city) {
         cityRepository.save(city);
     }
 
@@ -32,9 +30,9 @@ public class CityService {
 
         City city_DB = cityRepository.findOne(id);
 
-        if(city.getCityName() != null)
+        if (city.getCityName() != null)
             city_DB.setCityName(city.getCityName());
-        if(city.getEnable() != null)
+        if (city.getEnable() != null)
             city_DB.setEnable(city.getEnable());
 
         cityRepository.save(city_DB);
@@ -42,22 +40,6 @@ public class CityService {
 
     public void deleteCity(String id) {
         cityRepository.delete(id);
-    }
-
-    public void initCity(){
-
-        List<String> cities = Arrays.asList(
-                "Tehran","Isfahan","Kerman","Khozestan","Azarbayjan",
-                "Lorestan","Khorasan","Sistan Baloochestan","Qazvin","Fars"
-        );
-
-        for (String c:cities) {
-            City city = new City();
-            city.setCityName(c);
-            city.setEnable(true);
-            cityRepository.save(city);
-        }
-
     }
 
 }

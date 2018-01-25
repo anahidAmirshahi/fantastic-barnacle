@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,6 +25,7 @@ public class Product extends BaseEntity {
     private long purchaseDate;
     private BigDecimal price;
     private double weight;
+    private int existCount;
 
     @OneToOne
     private Category category;

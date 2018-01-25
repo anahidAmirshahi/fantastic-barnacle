@@ -10,11 +10,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 //DTO
-
 public class InvoiceDTO {
 
     private String productId;
     private Integer amount;
+
 }

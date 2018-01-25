@@ -35,10 +35,10 @@ public class CustomerController {
         return customer;
     }
 
+    // ---------------- INVOICE ----------------
     @PostMapping("/customers/{id}/invoice")
     public String createInvoice(@RequestBody List<InvoiceDTO> invoiceDTOs, @PathVariable String id) {
-        return " Thanks for your purchase, tracking number : "
-                + invoiceService.createInvoice(invoiceDTOs, id); //follow this method in InvoiceService
+        return invoiceService.createInvoice(invoiceDTOs, id); //follow this method in InvoiceService
     }
 
     @PutMapping("/customers/{id}")

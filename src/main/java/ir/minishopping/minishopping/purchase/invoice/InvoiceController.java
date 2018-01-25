@@ -36,48 +36,6 @@ public class InvoiceController {
         invoiceService.deleteInvoice(id);
     }
 
-
-    /*    @PostMapping("/invoices")
-    @ResponseBody
-    public String insertInvoice(@RequestBody Invoice invoice) {
-        invoiceService.insertInvoice(invoice);
-        return "Thanks for your purchase, invoice created successfully, tracking number : : " + invoice.getTrackingNo();
-    }*/
-
-/*    // to add one row -- NOT CORRECT IDEA --
-    @PostMapping("invoice/addRow")
-    @ResponseBody
-    public Invoice addInvoice(@RequestBody InvoiceRow invoiceRow) {
-
-        invoiceRowService.save(invoiceRow);
-
-        Invoice invoice = new Invoice();
-        //Customer customer = new Customer();
-
-        List<InvoiceRow> rows = new ArrayList<>();
-        rows.add(invoiceRow);
-
-        invoice.setInvoiceRows(rows);
-        //invoice.setCustomer(customer);
-        invoice.setEnable(true);
-
-        CodeGenerator codeGenerator = new CodeGenerator();
-        invoice.setTrackingNo(codeGenerator.randomUUID(10));
-
-
-        BigDecimal price = invoiceRow.getProduct().getPrice();
-        BigDecimal cnt = BigDecimal.valueOf(invoiceRow.getCount());
-
-        invoice.setTotalPrice(price.multiply(cnt));
-
-        invoiceService.insertInvoice(invoice);
-        //return "Thanks for your purchase, invoice create successfully, tracking number : : " + invoice.getTrackingNo();
-
-
-
-
-        return invoice;
-    }*/
-
-
+    @GetMapping("/invoices/costs")
+    public InvoiceCostDTO getInvoicesCosts(){return invoiceService.getInvoicesCosts();}
 }

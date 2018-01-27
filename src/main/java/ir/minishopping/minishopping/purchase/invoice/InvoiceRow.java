@@ -28,5 +28,6 @@ public class InvoiceRow extends BaseEntity {
     private Invoice invoice;
 
     public int count;
+    public String note;
 
 }

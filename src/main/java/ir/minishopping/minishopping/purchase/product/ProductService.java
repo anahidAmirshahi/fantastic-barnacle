@@ -52,8 +52,8 @@ public class ProductService {
             product_DB.setName(product.getName());
         if (product.getWeight() != 0)
             product_DB.setWeight(product.getWeight());
-        if (product.getExistCount() != 0)
-            product_DB.setExistCount(product.getExistCount());
+        if (product.getExistQuantity() != 0)
+            product_DB.setExistQuantity(product.getExistQuantity());
         if (product.getPrice().compareTo(BigDecimal.ZERO) != 0)
             product_DB.setPrice(product.getPrice());
 

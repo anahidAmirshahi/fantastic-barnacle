@@ -1,7 +1,6 @@
 package ir.minishopping.minishopping.purchase.invoice;
 
 import ir.minishopping.minishopping.purchase.InvoiceStatus;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +28,8 @@ public class InvoiceController {
     }
 
     @PostMapping("/invoicesState/{id}")
-    public void changeInvoiceState(@PathVariable String id,@RequestParam InvoiceStatus state) {
-        invoiceService.changeInvoiceState(id,state);
+    public void changeInvoiceState(@PathVariable String id, @RequestParam InvoiceStatus state) {
+        invoiceService.changeInvoiceState(id, state);
     }
 
     @PutMapping("/invoices/{id}")

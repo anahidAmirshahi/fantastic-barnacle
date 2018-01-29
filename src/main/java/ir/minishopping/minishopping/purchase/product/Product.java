@@ -25,7 +25,7 @@ public class Product extends BaseEntity {
     private long purchaseDate;
     private BigDecimal price;
     private double weight;
-    private int existCount;
+    private int existQuantity;
 
     @OneToOne
     private Category category;

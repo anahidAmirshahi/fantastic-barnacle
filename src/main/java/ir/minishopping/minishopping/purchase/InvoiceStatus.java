@@ -1,10 +1,14 @@
 package ir.minishopping.minishopping.purchase;
 
-public enum InvoiceStatus {
+import lombok.Getter;
 
-        EXPORTED,
-        STOCK_CONTROL,
-        PAYMENT_CONTROL,
-        FINAL_REGISTER
+import java.io.Serializable;
 
+@Getter//remember about GETTER
+public enum InvoiceStatus implements Serializable {
+
+    CREATED,//export time state
+    SENT, //product sent to customer
+    DELIVERED,
+    CANCELED
 }

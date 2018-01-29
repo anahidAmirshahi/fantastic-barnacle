@@ -1,5 +1,7 @@
 package ir.minishopping.minishopping.purchase.invoice;
 
+import ir.minishopping.minishopping.purchase.InvoiceStatus;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,11 @@ public class InvoiceController {
         return invoiceService.trackInvoice(id);
     }
 
+    @PostMapping("/invoicesState/{id}")
+    public void changeInvoiceState(@PathVariable String id,@RequestParam InvoiceStatus state) {
+        invoiceService.changeInvoiceState(id,state);
+    }
+
     @PutMapping("/invoices/{id}")
     public void updateInvoice(@RequestBody Invoice invoice, @PathVariable String id) {
         invoiceService.updateInvoice(invoice, id);
@@ -37,5 +44,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoices/costs")
-    public InvoiceCostDTO getInvoicesCosts(){return invoiceService.getInvoicesCosts();}
+    public InvoiceCostDTO getInvoicesCosts() {
+        return invoiceService.getInvoicesCosts();
+    }
 }

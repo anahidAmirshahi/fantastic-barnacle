@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ir.minishopping.minishopping.purchase.InvoiceStatus.CREATED;
+
 @Slf4j
 @Transactional
 @Service
@@ -32,16 +34,16 @@ public class InvoiceService {
     @Autowired
     private InvoiceRowService invoiceRowService;
 
-    //TODO all about pageable
-    public Page<Invoice> getAllInvoices(Pageable pageable)   {
+    //about pageable
+    public Page<Invoice> getAllInvoices(Pageable pageable) {
         return invoiceRepository.findAll(pageable);
     }
 
-    public Invoice getInvoice(String id)    {
+    public Invoice getInvoice(String id) {
         return invoiceRepository.findOne(id);
     }
 
-    public Invoice trackInvoice(String trackingNo)    {
+    public Invoice trackInvoice(String trackingNo) {
         return invoiceRepository.findByTrackingNo(trackingNo);
     }
 
@@ -49,17 +51,17 @@ public class InvoiceService {
         InvoiceCostDTO invoiceCostDTO = new InvoiceCostDTO();
         List<Invoice> invoices = invoiceRepository.findAll();
 
-        invoiceCostDTO.setTotalCost(BigDecimal.ZERO);
-        invoiceCostDTO.setTotalInvoices(0);
+        invoiceCostDTO.setTotalAmount(BigDecimal.ZERO);
+        invoiceCostDTO.setTotalCreated(0);
         invoiceCostDTO.setTotalSell(0);
 
         for (Invoice i : invoices) {
-            invoiceCostDTO.setTotalCost(invoiceCostDTO.getTotalCost().add(i.getTotalPrice()));
+            invoiceCostDTO.setTotalAmount(invoiceCostDTO.getTotalAmount().add(i.getTotalPrice()));
             for (InvoiceRow ir : i.getInvoiceRows())
                 invoiceCostDTO.setTotalSell(invoiceCostDTO.getTotalSell() + ir.getCount());
         }
 
-        invoiceCostDTO.setTotalInvoices(invoices.size());
+        invoiceCostDTO.setTotalCreated(invoices.size());
         return invoiceCostDTO;
     }
 
@@ -73,7 +75,7 @@ public class InvoiceService {
         invoice.setCustomer(customer);
         invoice.setEnable(true);
 
-        invoice.setStatus(InvoiceStatus.EXPORTED);
+        invoice.setStatus(CREATED);
 
         CodeGenerator codeGenerator = new CodeGenerator();
         String trackingNo = codeGenerator.randomUUID(10);
@@ -88,23 +90,32 @@ public class InvoiceService {
 
             InvoiceRow invoiceRow = new InvoiceRow();
 
-            Product product = productRepository.findOne(invoiceDTO.getProductId());
-
-            int amount = (invoiceDTO.getAmount() != null) ? invoiceDTO.getAmount() : 1;
-
-            if (product.getExistCount() < amount) {
+            if (productRepository.findOne(invoiceDTO.getProductId()) == null) {
                 throw new InvoiceException("Not enough storage of this product is available.");
-            } else if (product.getPrice() != null) {
-                totalPrice = totalPrice.add(BigDecimal.valueOf(amount).multiply(product.getPrice()));
+            } else {
+                Product product = productRepository.findOne(invoiceDTO.getProductId());
 
-                invoiceRow.setCount(amount);
-                invoiceRow.setProduct(product);
-                invoiceRow.setEnable(true);
-                invoiceRow.setInvoice(invoice);
+                int quantity = (invoiceDTO.getProductQuantity() != null) ? invoiceDTO.getProductQuantity() : 1;
 
-                invoiceRowService.save(invoiceRow);
-                invoiceRowList.add(invoiceRow);
+                if (product.getExistQuantity() < quantity) {
+                    throw new InvoiceException("Not enough storage of this product is available.");
+                } else if (product.getPrice() != null) {
+
+                    totalPrice = totalPrice.add(BigDecimal.valueOf(quantity).multiply(product.getPrice()));
+
+                    invoiceRow.setCount(quantity);
+                    invoiceRow.setProduct(product);
+                    invoiceRow.setEnable(true);
+                    invoiceRow.setInvoice(invoice);
+
+                    invoiceRowService.save(invoiceRow);
+                    invoiceRowList.add(invoiceRow);
+
+                    product.setExistQuantity(product.getExistQuantity() - quantity);
+                    productRepository.save(product);
+                }
             }
+
         }
 
         invoice.setInvoiceRows(invoiceRowList);
@@ -113,6 +124,20 @@ public class InvoiceService {
         invoiceRepository.save(invoice);
 
         return " Thanks for your purchase, tracking number : " + trackingNo;
+    }
+
+    public void changeInvoiceState(String id, InvoiceStatus state) {
+        if (invoiceRepository.findOne(id) == null) {
+            throw new InvoiceException("id not found!");
+        } else {
+            Invoice invoice = invoiceRepository.findOne(id);
+            if (state == InvoiceStatus.CREATED) {
+                throw new InvoiceException("You are not allowed to change the state of invoice to CREATED state.");
+            } else {
+                invoice.setStatus(state);
+            }
+
+        }
     }
 
     public void updateInvoice(Invoice invoice, String id) {

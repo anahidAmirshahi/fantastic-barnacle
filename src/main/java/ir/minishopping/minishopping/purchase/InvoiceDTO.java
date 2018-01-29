@@ -14,6 +14,6 @@ import lombok.Setter;
 public class InvoiceDTO {
 
     private String productId;
-    private Integer amount;
+    private Integer productQuantity;
 
 }

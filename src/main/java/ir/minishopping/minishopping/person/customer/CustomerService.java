@@ -1,12 +1,17 @@
 package ir.minishopping.minishopping.person.customer;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import ir.minishopping.minishopping.common.CodeGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class CustomerService {
 
@@ -67,5 +72,26 @@ public class CustomerService {
         customerRepository.delete(id);
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Customer findCustomer() {
+
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+
+        QCustomer customer = QCustomer.customer;
+
+        Customer sara =
+                jpaQueryFactory.selectFrom(customer)
+                        .where(customer.firstName.eq("Sara"))
+                        .fetchOne();
+
+
+        long xa = jpaQueryFactory.selectFrom(customer).fetchCount();
+        log.info("xa {}"+xa);
+
+        return sara;
+    }
 
 }

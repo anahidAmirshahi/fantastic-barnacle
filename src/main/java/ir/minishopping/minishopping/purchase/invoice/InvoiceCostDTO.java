@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 
 public class InvoiceCostDTO{
 
-    int totalCreated;
+    Long totalCreated;
     BigDecimal totalAmount;
-    int totalSell;
+    Integer totalSell;
 
 }

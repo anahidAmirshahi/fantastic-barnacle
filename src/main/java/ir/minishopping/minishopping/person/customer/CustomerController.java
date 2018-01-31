@@ -1,5 +1,6 @@
 package ir.minishopping.minishopping.person.customer;
 
+import com.querydsl.core.types.dsl.NumberExpression;
 import ir.minishopping.minishopping.purchase.InvoiceDTO;
 import ir.minishopping.minishopping.purchase.invoice.InvoiceService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,4 +52,10 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
 
+
+
+    @GetMapping("/customers/querydsl")
+    public Customer findCustomer(){
+        return customerService.findCustomer();
+    }
 }

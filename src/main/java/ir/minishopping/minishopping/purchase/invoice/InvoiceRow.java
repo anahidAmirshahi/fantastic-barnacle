@@ -27,7 +27,7 @@ public class InvoiceRow extends BaseEntity {
     @ManyToOne
     private Invoice invoice;
 
-    public int count;
+    public Integer countRow;
     public String note;
 
 }

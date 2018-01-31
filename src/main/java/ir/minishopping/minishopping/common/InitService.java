@@ -71,6 +71,7 @@ public class InitService {
         product.setCode(codeGenerator1.randomUUID(8));
         product.setName("Antenna");
         product.setWeight(80d);
+        product.setExistQuantity(10);
         product.setPurchaseDate(Instant.now().getEpochSecond());
         product.setPrice(BigDecimal.valueOf(200));
         product.setEnable(true);
@@ -81,6 +82,7 @@ public class InitService {
         product1.setCode(codeGenerator2.randomUUID(8));
         product1.setName("Modem");
         product1.setWeight(80d);
+        product1.setExistQuantity(10);
         product1.setPurchaseDate(Instant.now().getEpochSecond());
         product1.setPrice(BigDecimal.valueOf(400));
         product1.setEnable(true);

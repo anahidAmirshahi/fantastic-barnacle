@@ -22,10 +22,10 @@ public class Product extends BaseEntity {
     private String name;
     private String country;
     private String code;
-    private long purchaseDate;
+    private Long purchaseDate;
     private BigDecimal price;
-    private double weight;
-    private int existQuantity;
+    private Double weight;
+    private Integer existQuantity;//todo stock
 
     @OneToOne
     private Category category;

@@ -1,5 +1,6 @@
 package ir.minishopping.minishopping.purchase.invoice;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import ir.minishopping.minishopping.common.CodeGenerator;
 import ir.minishopping.minishopping.person.customer.Customer;
 import ir.minishopping.minishopping.person.customer.CustomerRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,21 +50,20 @@ public class InvoiceService {
         return invoiceRepository.findByTrackingNo(trackingNo);
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public InvoiceCostDTO getInvoicesCosts() {
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QInvoice invoice = QInvoice.invoice;
+        QInvoiceRow invoiceRow = QInvoiceRow.invoiceRow;
+
         InvoiceCostDTO invoiceCostDTO = new InvoiceCostDTO();
-        List<Invoice> invoices = invoiceRepository.findAll();
+        invoiceCostDTO.setTotalCreated(jpaQueryFactory.selectFrom(invoice).where(invoice.enable.eq(true)).fetchCount());
+        invoiceCostDTO.setTotalAmount(jpaQueryFactory.select(invoice.totalPrice.sum()).from(invoice).where(invoice.enable.isTrue()).fetchOne());
+        invoiceCostDTO.setTotalSell(jpaQueryFactory.select(invoiceRow.countRow.sum()).from(invoiceRow).where(invoiceRow.enable.isTrue()).fetchOne());
 
-        invoiceCostDTO.setTotalAmount(BigDecimal.ZERO);
-        invoiceCostDTO.setTotalCreated(0);
-        invoiceCostDTO.setTotalSell(0);
-
-        for (Invoice i : invoices) {
-            invoiceCostDTO.setTotalAmount(invoiceCostDTO.getTotalAmount().add(i.getTotalPrice()));
-            for (InvoiceRow ir : i.getInvoiceRows())
-                invoiceCostDTO.setTotalSell(invoiceCostDTO.getTotalSell() + ir.getCount());
-        }
-
-        invoiceCostDTO.setTotalCreated(invoices.size());
         return invoiceCostDTO;
     }
 
@@ -103,7 +105,7 @@ public class InvoiceService {
 
                     totalPrice = totalPrice.add(BigDecimal.valueOf(quantity).multiply(product.getPrice()));
 
-                    invoiceRow.setCount(quantity);
+                    invoiceRow.setCountRow(quantity);
                     invoiceRow.setProduct(product);
                     invoiceRow.setEnable(true);
                     invoiceRow.setInvoice(invoice);
@@ -127,6 +129,7 @@ public class InvoiceService {
     }
 
     public void changeInvoiceState(String id, InvoiceStatus state) {
+
         if (invoiceRepository.findOne(id) == null) {
             throw new InvoiceException("id not found!");
         } else {
@@ -144,22 +147,27 @@ public class InvoiceService {
 
         Invoice invoice_DB = invoiceRepository.findOne(id);
 
-        if (invoice.getEnable() != null)
+        if (invoice.getEnable() != null) {
             invoice_DB.setEnable(invoice.getEnable());
+            log.info("******************"+invoice.getEnable());
+            for (InvoiceRow invoiceRow : invoice.getInvoiceRows()) {
+                invoiceRow.setEnable(invoice.getEnable());
+                invoiceRowService.save(invoiceRow);
+            }
+        }
         if (invoice.getCustomer() != null)
             invoice_DB.setCustomer(invoice.getCustomer());
-        if (invoice.getInvoiceRows() != null)
-            invoice_DB.setInvoiceRows(invoice.getInvoiceRows());
         if (invoice.getTrackingNo() != null)
             invoice_DB.setTrackingNo(invoice.getTrackingNo());
-        if (invoice.getTotalPrice().compareTo(BigDecimal.ZERO) != 0)        //compare big decimal with zero
+        if (invoice.getTotalPrice() != (BigDecimal.ZERO)) {
             invoice_DB.setTotalPrice(invoice.getTotalPrice());
-
+        }
         invoiceRepository.save(invoice_DB);
     }
 
     public void deleteInvoice(String id) {
         invoiceRepository.delete(id);
     }
+
 
 }
